@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0"
+/>
+
+<title>Weekly Progress Report</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  padding:20px;
+  background:#e9edf2;
+  font-family:Arial,sans-serif;
+}
+
+/* CONTAINER */
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  background:#fff;
+  padding:25px;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 5px 25px rgba(0,0,0,0.08);
+  border-top:8px solid #000;
+  border-radius:4px;
+}
+
+/* WATERMARK */
+
+.watermark{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:55%;
+  opacity:0.12;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* CONTENT */
+
+.content{
+  position:relative;
+  z-index:2;
+}
+
+/* HEADER */
+
+.header-fields{
+  margin-bottom:30px;
+}
+
+.header-row{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+
+.header-row label{
+  font-size:14px;
+  font-weight:bold;
+  min-width:180px;
+}
+
+.line-input{
+  flex:1;
+  min-width:250px;
+  border:none;
+  border-bottom:1px solid #000;
+  outline:none;
+  padding:8px 5px;
+  font-size:13px;
+  background:transparent;
+}
+
+/* SECTION TITLES */
+
+.section-title{
+  font-weight:bold;
+  font-size:15px;
+  margin:35px 0 12px;
+  text-transform:uppercase;
+  color:#111;
+  border-left:5px solid #000;
+  padding-left:10px;
+}
+
+/* TABLE WRAPPER */
+
+.table-wrapper{
+  width:100%;
+  overflow-x:auto;
+}
+
+/* TABLE */
+
+table{
+  width:100%;
+  min-width:950px;
+  border-collapse:collapse;
+  margin-bottom:30px;
+  font-size:12px;
+  background:#fff;
+  border:1px solid #cfcfcf;
+}
+
+/* TABLE HEADERS */
+
+th{
+  background:#111;
+  color:#fff;
+  text-align:left;
+  padding:10px 8px;
+  border:1px solid #999;
+  vertical-align:middle;
+  font-size:12px;
+  font-weight:bold;
+  line-height:1.4;
+}
+
+/* TABLE CELLS */
+
+td{
+  border:1px solid #d5d5d5;
+  padding:6px;
+  vertical-align:top;
+  background:#fff;
+}
+
+/* STRIPES */
+
+tbody tr:nth-child(even){
+  background:#f7f7f7;
+}
+
+/* INPUTS */
+
+input[type="text"],
+input[type="date"],
+textarea,
+select{
+
+  width:100%;
+  border:none;
+  background:transparent;
+  padding:6px;
+  font-size:12px;
+  outline:none;
+  color:#111;
+  font-family:Arial,sans-serif;
+}
+
+/* TEXTAREAS */
+
+textarea{
+  resize:vertical;
+  min-height:55px;
+  line-height:1.5;
+  white-space:pre-wrap;
+  overflow-wrap:break-word;
+  word-break:break-word;
+}
+
+/* FIRST COLUMN */
+
+td:first-child,
+th:first-child{
+  text-align:center;
+  width:45px;
+  font-weight:bold;
+}
+
+/* BUTTON */
+
+.buttons{
+  margin-top:20px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  background:#000;
+  color:#fff;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:bold;
+  border-radius:4px;
+  transition:0.2s ease;
+}
+
+button:hover{
+  background:#222;
+}
+
+/* FOOTER */
+
+.footer{
+  text-align:center;
+  font-size:10px;
+  color:#666;
+  margin-top:15px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+  body{
+    padding:10px;
+  }
+
+  .container{
+    padding:15px;
+  }
+
+  .header-row{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .header-row label{
+    min-width:100%;
+  }
+
+  .line-input{
+    width:100%;
+    min-width:100%;
+  }
+
+  .section-title{
+    font-size:14px;
+  }
+
+  table{
+    font-size:11px;
+  }
+
+  th{
+    padding:8px 6px;
+  }
+
+  td{
+    padding:5px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container" id="reportContent">
+
+  <!-- WATERMARK -->
+  <!-- IMPORTANT:
+       Replace this with your REAL image path -->
+  <img
+    src="./watermark.png"
+    class="watermark"
+    alt="Watermark"
+  >
+
+  <div class="content">
+
+    <!-- HEADER -->
+
+    <div class="header-fields">
+
+      <div class="header-row">
+        <label for="weekEnding">
+          Week Ending:
+        </label>
+
+        <input
+          type="text"
+          id="weekEnding"
+          class="line-input"
+          placeholder="Enter week ending"
+        >
+      </div>
+
+      <div class="header-row">
+        <label for="preparedBy">
+          Prepared By:
+        </label>
+
+        <input
+          type="text"
+          id="preparedBy"
+          class="line-input"
+          placeholder="Enter preparer name"
+        >
+      </div>
+
+      <div class="header-row">
+        <label for="manager">
+          Manager / Supervisor:
+        </label>
+
+        <input
+          type="text"
+          id="manager"
+          class="line-input"
+          placeholder="Enter manager name"
+        >
+      </div>
+
+    </div>
+
+    <!-- SECTION 1 -->
+
+    <div class="section-title">
+      1. Weekly Projects / Tasks Planned
+    </div>
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Project / Task</th>
+            <th>Objective / Outcome</th>
+            <th>Responsible Person</th>
+            <th>Start Date</th>
+            <th>Due Date</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <!-- ROW 1 -->
+
+          <tr>
+            <td>1</td>
+
+            <td>
+              <textarea></textarea>
+            </td>
+
+            <td>
+              <textarea></textarea>
+            </td>
+
+            <td>
+              <textarea></textarea>
+            </td>
+
+            <td>
+              <input type="date">
+            </td>
+
+            <td>
+              <input type="date">
+            </td>
+
+            <td>
+              <select>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </td>
+          </tr>
+
+          <!-- ROW 2 -->
+
+          <tr>
+            <td>2</td>
+
+            <td><textarea></textarea></td>
+
+            <td><textarea></textarea></td>
+
+            <td><textarea></textarea></td>
+
+            <td><input type="date"></td>
+
+            <td><input type="date"></td>
+
+            <td>
+              <select>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </td>
+          </tr>
+
+          <!-- ROW 3 -->
+
+          <tr>
+            <td>3</td>
+
+            <td><textarea></textarea></td>
+
+            <td><textarea></textarea></td>
+
+            <td><textarea></textarea></td>
+
+            <td><input type="date"></td>
+
+            <td><input type="date"></td>
+
+            <td>
+              <select>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </td>
+          </tr>
+
+          <!-- ROW 4 -->
+
+          <tr>
+            <td>4</td>
+
+            <td><textarea></textarea></td>
+
+            <td><textarea></textarea></td>
+
+            <td><textarea></textarea></td>
+
+            <td><input type="date"></td>
+
+            <td><input type="date"></td>
+
+            <td>
+              <select>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </td>
+          </tr>
+
+          <!-- ROW 5 -->
+
+          <tr>
+            <td>5</td>
+
+            <td><textarea></textarea></td>
+
+            <td><textarea></textarea></td>
+
+            <td><textarea></textarea></td>
+
+            <td><input type="date"></td>
+
+            <td><input type="date"></td>
+
+            <td>
+              <select>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <!-- SECTION 2 -->
+
+    <div class="section-title">
+      2. Weekly Progress Monitoring
+    </div>
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Planned Task</th>
+            <th>Status</th>
+            <th>% Completed</th>
+            <th>Evidence / Comments</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr>
+            <td>1</td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><input type="text"></td>
+            <td><textarea></textarea></td>
+          </tr>
+
+          <tr>
+            <td>2</td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><input type="text"></td>
+            <td><textarea></textarea></td>
+          </tr>
+
+          <tr>
+            <td>3</td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><input type="text"></td>
+            <td><textarea></textarea></td>
+          </tr>
+
+          <tr>
+            <td>4</td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><input type="text"></td>
+            <td><textarea></textarea></td>
+          </tr>
+
+          <tr>
+            <td>5</td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><input type="text"></td>
+            <td><textarea></textarea></td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <!-- SECTION 3 -->
+
+    <div class="section-title">
+      3. Uncompleted Tasks / Reasons For Delay
+    </div>
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>Task Not Completed</th>
+            <th>Reason For Delay</th>
+            <th>Corrective Action</th>
+            <th>New Deadline</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr>
+            <td>1</td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><input type="date"></td>
+          </tr>
+
+          <tr>
+            <td>2</td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><input type="date"></td>
+          </tr>
+
+          <tr>
+            <td>3</td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><input type="date"></td>
+          </tr>
+
+          <tr>
+            <td>4</td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><input type="date"></td>
+          </tr>
+
+          <tr>
+            <td>5</td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><textarea></textarea></td>
+            <td><input type="date"></td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <!-- DOWNLOAD -->
+
+    <div class="buttons">
+
+      <button onclick="downloadPDF()">
+        Download PDF
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div class="footer">
+  Internal Weekly Reporting Document
+</div>
+
+<script>
+
+async function downloadPDF(){
+
+  const { jsPDF } = window.jspdf;
+
+  const element =
+  document.getElementById("reportContent");
+
+  // AUTO RESIZE TEXTAREAS
+
+  document
+    .querySelectorAll("textarea")
+    .forEach(ta=>{
+
+      ta.style.height = "auto";
+
+      ta.style.height =
+      ta.scrollHeight + "px";
+
+    });
+
+  const canvas =
+  await html2canvas(element,{
+
+    scale:2,
+    useCORS:true,
+    backgroundColor:"#ffffff",
+
+    onclone:(doc)=>{
+
+      doc
+        .querySelectorAll("textarea")
+        .forEach(ta=>{
+
+          const div =
+          doc.createElement("div");
+
+          div.textContent =
+          ta.value;
+
+          div.style.whiteSpace =
+          "pre-wrap";
+
+          div.style.wordBreak =
+          "break-word";
+
+          div.style.overflowWrap =
+          "break-word";
+
+          div.style.minHeight =
+          "55px";
+
+          div.style.padding =
+          "6px";
+
+          div.style.fontSize =
+          "12px";
+
+          ta.replaceWith(div);
+
+        });
+
+    }
+
+  });
+
+  const imgData =
+  canvas.toDataURL("image/jpeg",1.0);
+
+  const pdf =
+  new jsPDF({
+    orientation:"portrait",
+    unit:"mm",
+    format:"a4"
+  });
+
+  const pageWidth = 210;
+  const pageHeight = 297;
+  const margin = 5;
+
+  const imgWidth =
+  pageWidth - margin * 2;
+
+  const imgHeight =
+  (canvas.height * imgWidth)
+  / canvas.width;
+
+  let heightLeft =
+  imgHeight;
+
+  let position =
+  margin;
+
+  pdf.addImage(
+    imgData,
+    "JPEG",
+    margin,
+    position,
+    imgWidth,
+    imgHeight
+  );
+
+  heightLeft -=
+  (pageHeight - margin * 2);
+
+  while(heightLeft > 0){
+
+    position =
+    heightLeft - imgHeight + margin;
+
+    pdf.addPage();
+
+    pdf.addImage(
+      imgData,
+      "JPEG",
+      margin,
+      position,
+      imgWidth,
+      imgHeight
+    );
+
+    heightLeft -=
+    (pageHeight - margin * 2);
+
+  }
+
+  pdf.save(
+    "weekly-progress-report.pdf"
+  );
+
+}
+
+</script>
+
+</body>
+</html>
